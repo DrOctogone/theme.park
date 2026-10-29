@@ -22,6 +22,8 @@ on:
         - testing
 jobs:
   deploy:
+    # Publishes to the upstream registries/domain with upstream secrets: skip in forks
+    if: ${{ !github.event.repository.fork }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.0

@@ -23,6 +23,8 @@ on:
         - '.github/**'
 jobs:
   build-and-push-it-to-the-limit:
+    # Publishes to the upstream registries/domain with upstream secrets: skip in forks
+    if: ${{ !github.event.repository.fork }}
     runs-on: ubuntu-latest
     strategy:
       matrix:

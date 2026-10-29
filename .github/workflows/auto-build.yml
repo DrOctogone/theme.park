@@ -48,6 +48,8 @@ on:
 
 jobs:
   push_to_ghcr_io:
+    # Publishes to the upstream registries/domain with upstream secrets: skip in forks
+    if: ${{ !github.event.repository.fork }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
