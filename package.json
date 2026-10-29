@@ -1,0 +1,11 @@
+{
+  "name": "theme.park-tests",
+  "private": true,
+  "description": "Visual smoke tests for theme.park CSS themes",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
