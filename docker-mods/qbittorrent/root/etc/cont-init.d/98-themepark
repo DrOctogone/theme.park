@@ -1,4 +1,4 @@
-#!/command/with-contenv bash
+#!/command/with-contenv bash 
 
 echo '------------------------------'
 echo '| qBittorrent theme.park Mod |'
@@ -8,6 +8,12 @@ APP_FILEPATH='/config/qBittorrent/qBittorrent.conf'
 if [ "${TP_HOTIO}" = true ]; then
     echo 'Changing to Hotio file path!'
     APP_FILEPATH='/config/config/qBittorrent.conf'
+fi
+
+# Validate that the config file exist
+if [[ ! -f "${APP_FILEPATH}" ]]; then
+    echo "qBittorrent config file not found at ${APP_FILEPATH}. Please ensure qBittorrent is configured correctly."
+    exit 0
 fi
 
 # Backup config
@@ -23,17 +29,23 @@ if [ "${TP_DISABLE_THEME}" = true ]; then
   exit 0
 fi
 
-if ! [[ -x "$(command -v svn)" ]]; then
+if [ -z ${QBITTORRENT_VERSION+x} ]; then \
+    echo 'QBITTORRENT_VERSION not set. Using the latest stable.'
+    QBITTORRENT_VERSION=$(curl -sL "http://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/APKINDEX.tar.gz" | tar -xz -C /tmp \
+    && awk '/^P:qbittorrent-nox$/,/V:/' /tmp/APKINDEX | sed -n 2p | sed 's/^V://' | sed 's/-.*//'); \
+fi
+
+if ! [[ -x "$(command -v git)" ]]; then
 echo '--------------------------'
-echo '| Installing svn package |'
+echo '| Installing git package |'
 echo '--------------------------'
     if [ -x "$(command -v apk)" ]; then 
       apk update && \
-      apk add --no-cache subversion
+      apk add --no-cache git
       apk add --no-cache perl
     elif [ -x "$(command -v apt-get)" ]; then
       apt-get update && \
-      apt-get install -y subversion
+      apt-get install -y git
       apt-get install -y perl
     fi
 fi
@@ -46,6 +58,7 @@ echo -e "Variables set:\\n\
 'TP_DOMAIN'=${TP_DOMAIN}\\n\
 'TP_COMMUNITY_THEME'=${TP_COMMUNITY_THEME}\\n\
 'TP_SCHEME'=${TP_SCHEME}\\n\
+'QBITTORRENT_VERSION'=${QBITTORRENT_VERSION}\\n\
 'TP_THEME'=${TP_THEME}\\n"
 
 # Set default
@@ -80,15 +93,18 @@ if [[ ! -d /themepark ]]; then
     echo '---------------------------------------'
     echo '| Downloading WebUI files from github |'
     echo '---------------------------------------'
-    printf '\nDownloading qBittorrent webui to "/themepark"..please wait\n'
-    svn export --quiet https://github.com/qbittorrent/qBittorrent/trunk/src/webui/www /themepark
+    printf '\nDownloading qBittorrent to /temp\n'
+    echo 'Downloading WebUI for version:' "${QBITTORRENT_VERSION}"
+    git clone --depth 1 -b release-${QBITTORRENT_VERSION} https://github.com/qbittorrent/qBittorrent /temp
+
     printf '\nDownload finished\n\n'
-    printf '\nDownloading qBittorrent webui icons to "/themepark/xxx"..please wait\n'
-    svn export --force --quiet https://github.com/qbittorrent/qBittorrent/trunk/src/icons /temp
-    cp -a /temp/. /themepark/public/icons
-    cp -a /temp/. /themepark/private/icons
+    cp -a /temp/src/webui/www /themepark
+    cp -a /temp/src/icons/. /themepark/public/icons
+    cp -a /temp/src/icons/. /themepark/private/icons
+    printf '\nCopy finished\n\n'
     rm -rf /temp
-    printf '\nDownload finished\n\n'
+    rm -rf /tmp/*
+    printf '\nCleanup finished\n\n'
 fi
 
 sed_file(){
@@ -98,8 +114,8 @@ sed_file(){
 }
 
 clean_file() {
-    perl -i -pe 's/QBT_TR?\(//' "$1"
-    perl -i -pe 's/\)QBT_TR\[CONTEXT=.*?\]//' "$1"
+    perl -i -pe 's/QBT_TR?\(//g' "$1"
+    perl -i -pe 's/\)QBT_TR\[CONTEXT=.*?\]//g' "$1"
 }
 
 if ! grep -q "${TP_DOMAIN}/css/base" /themepark/public/index.html; then
@@ -117,33 +133,38 @@ if ! grep -q "${TP_DOMAIN}/css/base" /themepark/public/index.html; then
 fi
 
 # Clean all files
-printf 'Cleaning files in /themepark for any translation text...\n\n
---------------------------------------------------------------------------
-| !!! RESTART THE CONTAINER IF THIS IS THE FIRST TIME CLEANING FILES !!! |
---------------------------------------------------------------------------\n\n'
+echo '------------------------------------------------------------'
+echo '| Cleaning files in /themepark for any translation text... |'
+echo '------------------------------------------------------------'
 find /themepark -type f \( ! -iname "*.svg" \) | while read fname
 do
     clean_file $fname
 done
 
-if ! grep -q "WebUI\\\RootFolder" "${APP_FILEPATH}"; then
-    echo '--------------------------------------'
-    echo '| Adding WebUI\RootFolder=/themepark |'
-    echo '--------------------------------------'
-    sed -i -e '$aWebUI\\RootFolder=/themepark' "${APP_FILEPATH}";
-fi
+if ! grep -q "WebUI\\\RootFolder" "${APP_FILEPATH}" || ! grep -q "WebUI\\\AlternativeUIEnabled" "${APP_FILEPATH}"; then
+    if ! grep -q "^\[Preferences\]" "${APP_FILEPATH}"; then
+        printf '\n%s\n' "[Preferences]" >> "${APP_FILEPATH}"
+    fi
 
-if ! grep -q "WebUI\\\AlternativeUIEnabled" "${APP_FILEPATH}"; then
-    echo '------------------------------------------'
-    echo '| Adding WebUI\AlternativeUIEnabled=true |'
-    echo '------------------------------------------'
-    sed -i -e '$aWebUI\\AlternativeUIEnabled=true' "${APP_FILEPATH}";
+    if ! grep -q "WebUI\\\RootFolder" "${APP_FILEPATH}"; then
+        echo '--------------------------------------'
+        echo '| Adding WebUI\RootFolder=/themepark |'
+        echo '--------------------------------------'
+        sed -i -e '/\[Preferences\]/aWebUI\\RootFolder=/themepark' "${APP_FILEPATH}"
+    fi
+
+    if ! grep -q "WebUI\\\AlternativeUIEnabled" "${APP_FILEPATH}"; then
+        echo '------------------------------------------'
+        echo '| Adding WebUI\AlternativeUIEnabled=true |'
+        echo '------------------------------------------'
+        sed -i -e '/\[Preferences\]/aWebUI\\AlternativeUIEnabled=true' "${APP_FILEPATH}"
+    fi
 fi
 
 if  ! grep -q "WebUI\\\RootFolder=/themepark" "${APP_FILEPATH}" || ! grep -q "WebUI\\\AlternativeUIEnabled=true" "${APP_FILEPATH}"; then
     echo '-------------------------------------------------------'
     echo '| Updating RootFolder and AlternativeUIEnabled values |'
     echo '-------------------------------------------------------'
-    sed -i "s/WebUI\\\AlternativeUIEnabled=.*$/WebUI\\\AlternativeUIEnabled=true/g" "${APP_FILEPATH}";
-    sed -i "s/WebUI\\\RootFolder=.*$/WebUI\\\RootFolder=\/themepark/g" "${APP_FILEPATH}";
+    sed -i "s/WebUI\\\AlternativeUIEnabled=.*$/WebUI\\\AlternativeUIEnabled=true/g" "${APP_FILEPATH}"
+    sed -i "s/WebUI\\\RootFolder=.*$/WebUI\\\RootFolder=\/themepark/g" "${APP_FILEPATH}"
 fi

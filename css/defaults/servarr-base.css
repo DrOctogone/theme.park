@@ -13,6 +13,12 @@
 @import url("/css/defaults/placeholders.css");
 @import url("/css/defaults/transparent.css");
 
+:root {
+    --scrollbarBackgroundColor: var(--transparency-light-25) !important;
+    --scrollbarHoverBackgroundColor: var(--transparency-light-35) !important;
+    --linkColor: var(--link-color) !important;
+    --linkHoverColor: var(--link-color-hover) !important;
+    }
 
 body {
     background: var(--main-bg-color);
@@ -291,9 +297,6 @@ a:hover {
     background: var(--transparency-dark-25);
 }
 
-[class*="ProgressBar-purple-"] {
-    background-color: rgb(var(--accent-color));
-}
 
 /* ITEM PAGE */
 
@@ -397,7 +400,7 @@ a:hover {
     color: var(--text-hover);
 }
 
-[class*="Label-default-"] {
+[class*="Label-default-"]:not([class*="MovieDetails-detailsInfoLabel-"]) {
     border-color: rgb(var(--accent-color));
     background-color: rgb(var(--accent-color));
     color: var(--label-text-color);
@@ -728,6 +731,10 @@ a:hover {
     background: var(--transparency-dark-10) !important;
 }
 
+[class*="AgendaEvent-event-"] {
+    border-bottom: 1px solid var(--transparency-light-25);
+}
+
 /* SETTINGS */
 [class*="Settings-link-"] {
     color: var(--text-hover);
@@ -744,6 +751,13 @@ a:hover {
 
 [class*="FormLabel-isAdvanced-"] {
     color: #ff902b;
+}
+
+/* SETTINGS - Tags */
+
+[class*="AutoTaggings-center-"], [class*="EditAutoTaggingModalContent-center-"] {
+    border: 1px solid transparent;
+    background-color: transparent;
 }
 
 /* MEDIA MANAGEMENT - FILE NAME TOKENS */

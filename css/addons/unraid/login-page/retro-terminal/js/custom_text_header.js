@@ -9,7 +9,7 @@ let custom_text_header = `
 <div class="custom-text-header"> <pre> _          _   _                             _        
 | |        | | | |                           | |    |  
 | |     _  | | | |  __             __   ,_   | |  __|  
-|/ \   |/  |/  |/  /  \_  |  |  |_/  \_/  |  |/  /  |  
-|   |_/|__/|__/|__/\__/    \/ \/  \__/    |_/|__/\_/|_/</pre> </div>
+|/ \\   |/  |/  |/  /  \\_  |  |  |_/  \\_/  |  |/  /  |  
+|   |_/|__/|__/|__/\\__/    \\/ \\/  \\__/    |_/|__/\\_/|_/</pre> </div>
 `;
 document.getElementById("login").innerHTML += custom_text_header
