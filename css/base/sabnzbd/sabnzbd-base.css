@@ -12,6 +12,21 @@
 @import url("/css/defaults/placeholders.css");
 @import url("/css/defaults/transparent.css");
 
+:root {
+    --clr-text: var(--text);
+    --clr-border: var(--transparency-light-20);
+    --clr-surface: var(--transparency-dark-15);
+    --clr-surface-alt: rgb(var(--accent-color));
+    --clr-table-row-alt: var(--transparency-light-20);
+    --clr-input-border:  var(--transparency-dark-15);
+    --clr-input-bg: var(--transparency-dark-15);
+    --clr-modal-bg: var(--modal-bg-color);
+    --clr-surface-hover: var(--transparency-dark-35);
+    --clr-border-subtle: var(--transparency-light-20);
+    --clr-dropdown-bg: var(--drop-down-menu-bg);
+    --clr-toggle-active: rgb(var(--accent-color));
+}
+
 body {
   background: var(--main-bg-color) !important;
   background-repeat: repeat, no-repeat;
@@ -162,10 +177,10 @@ hr {
   background-color: var(--link-color-hover);
 }
 
-/* .navbar-btn {
+.navbar-btn {
   background: var(--button-color) !important;
   border-color: transparent !important;
-} */
+}
 
 .navbar-inverse .navbar-nav>.open>a,
 .navbar-inverse .navbar-nav>.open>a:hover,
@@ -188,8 +203,10 @@ hr {
   border: none;
 }
 
-.dropdown-menu,
+
 #feedback-slider,
+/* .navbar-collapse, */
+/* .navbar-header, */
 .navbar-collapse.in .dropdown-menu {
   background: var(--drop-down-menu-bg);
   background-repeat: repeat, no-repeat;
@@ -260,11 +277,11 @@ hr {
 }
 
 svg.peity polygon {
-  fill: var(--button-color) !important;
+  fill: rgb(var(--accent-color)) !important;
 }
 
 svg.peity polyline {
-  stroke: var(--button-color) !important;
+  stroke: rgb(var(--accent-color)) !important;
 }
 
 .rss-icon-svg {
@@ -290,7 +307,7 @@ svg.peity polyline {
 
 .btn-default {
   color: var(--button-text) !important;
-  background: var(--button-color);
+  background: var(--button-color) !important;
   border-color: var(--button-color);
   outline: none !important;
 }
@@ -298,13 +315,13 @@ svg.peity polyline {
 .btn-default:focus,
 .btn-default.focus {
   color: var(--button-text-hover) !important;
-  background: var(--button-color-hover);
+  background: var(--button-color-hover) !important;
   border-color: var(--button-color-hover);
 }
 
 .btn-default:hover {
   color: var(--button-text-hover) !important;
-  background: var(--button-color-hover);
+  background: var(--button-color-hover) !important;
   border-color: var(--button-color-hover);
 }
 
@@ -504,8 +521,17 @@ td.delete .dropdown>a .caret {
   border-top-color: var(--button-color) !important;
 }
 
+fieldset>div,
+.history-table>tbody>tr:nth-of-type(odd),
 .table-striped>tbody>tr:nth-of-type(odd) {
-  background: var(--transparency-dark-25);
+  background: var(--transparency-dark-25) !important;
+}
+
+fieldset>div.even,
+  /* fieldset>div:nth-of-type(odd), */
+.history-table>tbody>tr:nth-of-type(even),
+.table-striped>tbody>tr:nth-of-type(even) {
+  background: transparent !important;
 }
 
 tbody.no-downloads tr td {
@@ -559,6 +585,14 @@ tr td.row-extra-text,
   background: var(--transparency-light-25);
 }
 
+.addRssTable td {
+  background: var(--main-bg-color) !important;
+}
+
+.addRssTable button {
+  background: var(--button-color) !important;
+}
+
 .progress .progress-bar .fileDetails {
   color: var(--button-text);
 }
@@ -598,7 +632,6 @@ tr td.row-extra-text,
 .processing-download>div {
   background-color: #888;
 }
-
 
 .multioperations-selector {
   border: 1px solid transparent !important;
@@ -692,7 +725,7 @@ tr td.row-extra-text,
 .nav-tabs>li.active>a:hover,
 .nav-tabs>li.active>a:focus {
   color: #555;
-  background: var(--transparency-light-15);
+  background: var(--transparency-dark-15);
 }
 
 .nav>li>a:hover,
@@ -702,7 +735,7 @@ tr td.row-extra-text,
 }
 
 .badge {
-  color: var(--label-text-color);
+  color: var(--label-text-color) !important;
   background-color: rgb(var(--accent-color));
 }
 
@@ -746,10 +779,10 @@ tr td.row-extra-text,
   color: var(--text-hover);
 }
 
-.colmask {
+/* .colmask {
   border: none;
   background: var(--transparency-dark-25);
-}
+} */
 
 .padTable:not(.ui-sortable) {
   background: var(--main-bg-color) !important;
@@ -771,7 +804,16 @@ table {
 .section,
 #addFeed,
 #addFeedContent {
-  border-bottom: 1px solid transparent;
+  border: 1px solid transparent;
+}
+
+.section, #addFeed, #addFeedContent {
+    overflow: hidden !important;
+    background-color: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 12px;
 }
 
 .alt,
@@ -1135,7 +1177,7 @@ fieldset[disabled] .form-control {
 /* Wizard */
 
 .container {
-  border: 1px solid rgba(255, 255, 255, 0);
+  /* border: 1px solid rgba(255, 255, 255, 0); */
   background-color: rgb(255 255 255 / 0);
 }
 
