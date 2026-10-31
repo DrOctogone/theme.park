@@ -34,6 +34,10 @@ CI : `.github/workflows/tests.yml` lance les mêmes tests sur chaque PR.
 
 ## Repères
 
+- `.claude/skills/unslop/` : le skill `unslop` qu'AGENTS.md demande
+  d'appliquer à tout texte, copié de la source citée dans AGENTS.md (seul
+  changement : Claude peut l'appeler de lui-même). Le rafraîchir depuis
+  cette source plutôt que de modifier ses règles.
 - CSS propre à une app : `css/base/<app>/<app>-base.css`.
 - Variables de thème : `css/theme-options/`, `css/community-theme-options/`.
 - Wrappers `<app>/<theme>.css` générés par `themes.py` : ne pas les éditer
